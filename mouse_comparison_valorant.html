@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mouse Comparison — Valorant 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0B0D12;
+    --surface: #13161E;
+    --surface2: #1A1E2B;
+    --border: #232838;
+    --border-bright: #2E3448;
+    --cyan: #00D4FF;
+    --cyan-dim: rgba(0,212,255,0.12);
+    --cyan-glow: rgba(0,212,255,0.25);
+    --amber: #FFB020;
+    --amber-dim: rgba(255,176,32,0.12);
+    --green: #22D37A;
+    --green-dim: rgba(34,211,122,0.12);
+    --red: #FF4D6A;
+    --red-dim: rgba(255,77,106,0.1);
+    --purple: #A78BFA;
+    --purple-dim: rgba(167,139,250,0.12);
+    --text-primary: #E8EAF0;
+    --text-secondary: #8B90A0;
+    --text-muted: #555B70;
+    --radius: 8px;
+    --radius-sm: 4px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    padding: 36px 24px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0F1219 0%, var(--bg) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 200px;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .page-header p {
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+  .header-meta {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── Warning banner ── */
+  .warn-banner {
+    margin: 16px 24px 0;
+    padding: 10px 14px;
+    background: rgba(255,176,32,0.08);
+    border: 1px solid rgba(255,176,32,0.25);
+    border-radius: var(--radius);
+    font-size: 11.5px;
+    color: #FFD080;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .warn-icon { font-size: 14px; line-height: 1.4; flex-shrink: 0; }
+
+  /* ── Filter tabs ── */
+  .controls {
+    padding: 16px 24px 0;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--border-bright); color: var(--text-primary); }
+  .filter-btn.active {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* ── Table wrapper ── */
+  .table-wrap {
+    padding: 20px 24px 40px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* ── Section header rows ── */
+  .sec-row td {
+    background: var(--surface);
+    padding: 8px 12px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-row:first-child td { border-top: none; }
+
+  /* ── Column headers ── */
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #0D0F16;
+    border-bottom: 1px solid var(--border-bright);
+    padding: 14px 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--text-secondary);
+  }
+  thead th:first-child {
+    text-align: left;
+    width: 130px;
+    min-width: 120px;
+    padding-left: 12px;
+  }
+  thead th.highlight { color: var(--cyan); }
+
+  /* ── Data rows ── */
+  tbody tr { transition: background 0.1s; }
+  tbody tr:not(.sec-row):hover { background: rgba(255,255,255,0.025); }
+  tbody td {
+    padding: 10px 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(35,40,56,0.6);
+    vertical-align: middle;
+    font-size: 12.5px;
+    color: var(--text-primary);
+  }
+  tbody td:first-child {
+    text-align: left;
+    padding-left: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  /* ── Mouse name header row ── */
+  .mouse-col-name {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+    display: block;
+    color: #fff;
+  }
+  .mouse-col-brand {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.6;
+  }
+  .badge-cyan   { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid rgba(0,212,255,0.2); }
+  .badge-amber  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(255,176,32,0.2); }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(34,211,122,0.2); }
+  .badge-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,77,106,0.2); }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+  .badge-gray   { background: rgba(139,144,160,0.1); color: var(--text-secondary); border: 1px solid var(--border); }
+  .trophy { font-size: 11px; margin-left: 2px; }
+
+  /* ── Weight bar (signature element) ── */
+  .weight-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .weight-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .weight-bar-track {
+    width: 52px; height: 5px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .weight-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  /* weight color: green (light) → amber → red (heavy), relative to 39g–65g range */
+
+  /* ── Price ── */
+  .price-main {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .price-note {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* ── Recommendation footer ── */
+  .rec-footer {
+    margin: 0 24px 40px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .rec-footer h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+  }
+  .rec-card {
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .rec-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .rec-card-pick {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .rec-card-reason {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .rec-border-cyan  { border-color: rgba(0,212,255,0.3); }
+  .rec-border-green { border-color: rgba(34,211,122,0.3); }
+  .rec-border-amber { border-color: rgba(255,176,32,0.3); }
+
+  /* ── Hidden / filtered ── */
+  tr.hidden-row { display: none; }
+
+  /* ── Footnote ── */
+  .footnote {
+    padding: 0 24px 32px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .na { color: var(--text-muted); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-eyebrow">Valorant 2026 · Mouse Comparison</div>
+  <h1>เปรียบเทียบเมาส์ทุกตัว</h1>
+  <p>อัปเดตข้อมูลจากแหล่งจริง · มิถุนายน 2026 · 9 รุ่น</p>
+  <div class="header-meta">
+    <span class="meta-pill"><span class="dot" style="background:#22D37A"></span>Verified</span>
+    <span class="meta-pill"><span class="dot" style="background:#00D4FF"></span>ราคา USD</span>
+    <span class="meta-pill"><span class="dot" style="background:#FFB020"></span>Wireless ทุกตัว</span>
+  </div>
+</div>
+
+<div class="warn-banner">
+  <span class="warn-icon">⚠️</span>
+  <span>ไม่พบเมาส์ชื่อ <strong>"Akko Tan8 Ultra"</strong> ในฐานะสินค้าจริง — ใส่ <strong>Akko Dash Ultra</strong> (PAW3950, 40g, $59.99) แทน ซึ่งน่าจะเป็นตัวที่หมายถึง + เพิ่ม <strong>Akko TAN8 Master</strong> (PAW3955, 55g) ซึ่ง verify ได้จากแหล่งจริง</span>
+</div>
+
+<div class="controls">
+  <span class="filter-label">ฟิลเตอร์:</span>
+  <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+  <button class="filter-btn" data-filter="budget">Budget (&lt;$100)</button>
+  <button class="filter-btn" data-filter="mid">Mid ($100–130)</button>
+  <button class="filter-btn" data-filter="premium">Premium ($130+)</button>
+  <button class="filter-btn" data-filter="8k">8K Hz เท่านั้น</button>
+  <button class="filter-btn" data-filter="super">เบา &lt;50g</button>
+</div>
+
+<div class="table-wrap">
+<table id="mouseTable">
+  <thead>
+    <tr>
+      <th></th>
+      <th class="highlight">Lamzu<br>Thorn V2</th>
+      <th>Razer<br>Viper V4 Pro</th>
+      <th>EG OP1w<br>4K <em>v1</em></th>
+      <th>EG OP1w<br>4K <em>v2</em></th>
+      <th>Hitscan<br>Hyperlight</th>
+      <th>Logitech<br>SL2 DEX</th>
+      <th>Akko<br>Dash Ultra</th>
+      <th>Akko<br>TAN8 Master</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- PRICE & SHAPE -->
+    <tr class="sec-row"><td colspan="9">💰 ราคา &amp; ข้อมูลพื้นฐาน</td></tr>
+
+    <tr data-price="mid" data-polling="8k" data-weight="55">
+      <td>ราคา (USD)</td>
+      <td><span class="price-main" style="color:var(--cyan)">$129.99</span></td>
+      <td><span class="price-main" style="color:var(--text-secondary)">$159.99</span></td>
+      <td><span class="price-main" style="color:var(--text-secondary)">$119.99</span></td>
+      <td><span class="price-main" style="color:var(--cyan)">$129.99</span></td>
+      <td><span class="price-main" style="color:var(--green)">$89.99</span><span class="price-note">+$25 8K dongle</span></td>
+      <td><span class="price-main" style="color:var(--text-secondary)">$159.99</span></td>
+      <td><span class="price-main" style="color:var(--green)">$59.99</span><span class="price-note">🏆 ถูกที่สุด</span></td>
+      <td><span class="price-main" style="color:var(--green)">~$59.99</span><span class="price-note">est.</span></td>
+    </tr>
+
+    <tr>
+      <td>รูปร่าง</td>
+      <td><span class="badge badge-purple">Ergo R-hand</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+      <td><span class="badge badge-purple">Ergo R-hand</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+      <td><span class="badge badge-gray">Symmetrical</span></td>
+    </tr>
+
+    <tr>
+      <td>ขนาด (mm)</td>
+      <td>124×66×42</td>
+      <td>~126×66×37</td>
+      <td>118×61×38</td>
+      <td>118×61×37</td>
+      <td>118×61×38</td>
+      <td>125×67×40</td>
+      <td>~117×61×37</td>
+      <td>124×64×40</td>
+    </tr>
+
+    <!-- WEIGHT -->
+    <tr class="sec-row"><td colspan="9">⚖️ น้ำหนัก</td></tr>
+    <tr>
+      <td>น้ำหนัก</td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#7DDCF0">55g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:61%;background:linear-gradient(90deg,#22D37A,#7DDCF0)"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#22D37A">49g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:40%;background:#22D37A"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#E8A040">59g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:77%;background:#E8A040"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#E8A040">58.5g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:75%;background:#E8A040"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#22D37A">39g <span style="font-size:11px">🏆</span></span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:0%;background:#22D37A"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#E8A040">60g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:81%;background:#E8A040"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#22D37A">40g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:4%;background:#22D37A"></div></div>
+        </div>
+      </td>
+      <td>
+        <div class="weight-cell">
+          <span class="weight-num" style="color:#7DDCF0">55g</span>
+          <div class="weight-bar-track"><div class="weight-bar-fill" style="width:61%;background:linear-gradient(90deg,#22D37A,#7DDCF0)"></div></div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- SENSOR -->
+    <tr class="sec-row"><td colspan="9">📡 Sensor &amp; Polling Rate</td></tr>
+
+    <tr>
+      <td>Sensor</td>
+      <td><span class="badge badge-cyan">PAW NEXT I</span></td>
+      <td>Focus Pro 50K G3</td>
+      <td>PAW3395</td>
+      <td><span class="badge badge-cyan">PAW3950</span></td>
+      <td>PAW3395</td>
+      <td>HERO 2 (44K)</td>
+      <td><span class="badge badge-cyan">PAW3950</span></td>
+      <td><span class="badge badge-cyan">PAW3955</span></td>
+    </tr>
+
+    <tr>
+      <td>Max DPI</td>
+      <td>50,000</td>
+      <td>50,000</td>
+      <td>26,000</td>
+      <td>30,000</td>
+      <td>26,000</td>
+      <td>44,000</td>
+      <td>30,000</td>
+      <td><span class="badge badge-green">65,000 🏆</span></td>
+    </tr>
+
+    <tr>
+      <td>Tracking speed</td>
+      <td>880 IPS</td>
+      <td><span class="badge badge-green">930 IPS 🏆</span></td>
+      <td>650 IPS</td>
+      <td>750 IPS</td>
+      <td>650 IPS</td>
+      <td>888 IPS</td>
+      <td>750 IPS</td>
+      <td>~900 IPS</td>
+    </tr>
+
+    <tr>
+      <td>Max Acceleration</td>
+      <td>80G</td>
+      <td><span class="badge badge-green">90G 🏆</span></td>
+      <td>50G</td>
+      <td>50G</td>
+      <td>50G</td>
+      <td>88G</td>
+      <td>50G</td>
+      <td>~50G</td>
+    </tr>
+
+    <tr>
+      <td>Max Polling</td>
+      <td><span class="badge badge-cyan">8,000 Hz</span></td>
+      <td><span class="badge badge-cyan">8,000 Hz</span></td>
+      <td>4,000 Hz</td>
+      <td>4,000 Hz</td>
+      <td><span class="badge badge-amber">8K (dongle $25)</span></td>
+      <td><span class="badge badge-cyan">8,000 Hz</span></td>
+      <td><span class="badge badge-cyan">8,000 Hz</span></td>
+      <td><span class="badge badge-cyan">8,000 Hz</span></td>
+    </tr>
+
+    <!-- SWITCHES -->
+    <tr class="sec-row"><td colspan="9">🖱️ Switches &amp; Build</td></tr>
+
+    <tr>
+      <td>Switch</td>
+      <td>Kailh Optical V2<br><small style="color:var(--text-muted)">150M</small></td>
+      <td>Razer Optical G4<br><small style="color:var(--text-muted)">100M ⚠️ เสียงดัง</small></td>
+      <td>Kailh GX Mech<br><small style="color:var(--cyan)">hot-swap</small></td>
+      <td>Kailh GX Mech<br><small style="color:var(--cyan)">hot-swap</small></td>
+      <td>Omron Optical<br><small style="color:var(--text-muted)">70M</small></td>
+      <td>Lightforce Hybrid<br><small style="color:var(--text-muted)">100M</small></td>
+      <td>Omron/Kailh Optical<br><small style="color:var(--text-muted)">150M</small></td>
+      <td>Omron Optical<br><small style="color:var(--text-muted)">rating N/A</small></td>
+    </tr>
+
+    <tr>
+      <td>Shell</td>
+      <td>Solid</td>
+      <td>Solid</td>
+      <td>Solid</td>
+      <td>Solid</td>
+      <td>Solid (open bottom)</td>
+      <td>Solid</td>
+      <td>Solid (open bottom)</td>
+      <td><span class="badge badge-amber">Perforated</span></td>
+    </tr>
+
+    <!-- BATTERY -->
+    <tr class="sec-row"><td colspan="9">🔋 Battery &amp; Wireless</td></tr>
+
+    <tr>
+      <td>Battery @1K Hz</td>
+      <td>~80–100 ชม.</td>
+      <td><span class="badge badge-green">180 ชม. 🏆</span></td>
+      <td>30 ชม. @4K<br><small style="color:var(--text-muted)">54 ชม. power save</small></td>
+      <td>30 ชม. @4K<br><small style="color:var(--text-muted)">54 ชม. power save</small></td>
+      <td>75 ชม. @1K<br><span class="badge badge-red" style="font-size:10px">⚠️ 15–20 ชม. @8K</span></td>
+      <td>95 ชม.</td>
+      <td><span class="badge badge-green">220 ชม. 🏆</span><br><small style="color:var(--text-muted)">28 ชม. @8K</small></td>
+      <td>~200 ชม.<br><small style="color:var(--text-muted)">(300mAh est.)</small></td>
+    </tr>
+
+    <tr>
+      <td>Connectivity</td>
+      <td>2.4G + USB-C</td>
+      <td>2.4G + USB-C</td>
+      <td>2.4G + USB-C</td>
+      <td>2.4G + USB-C</td>
+      <td>2.4G + USB-C</td>
+      <td>2.4G + USB-C</td>
+      <td><span class="badge badge-green">BT + 2.4G + USB-C</span></td>
+      <td><span class="badge badge-green">BT + 2.4G + USB-C</span></td>
+    </tr>
+
+    <!-- VALORANT FIT -->
+    <tr class="sec-row"><td colspan="9">🎯 Valorant Fit &amp; ความคิดเห็น</td></tr>
+
+    <tr>
+      <td>Grip ที่เหมาะ</td>
+      <td>Palm / Claw</td>
+      <td>All styles</td>
+      <td>Claw / Fingertip</td>
+      <td>Claw / Fingertip</td>
+      <td>Claw / Fingertip</td>
+      <td>Palm / Claw<br><small style="color:var(--text-muted)">มือใหญ่</small></td>
+      <td>Claw / Fingertip<br><small style="color:var(--text-muted)">มือเล็ก-กลาง</small></td>
+      <td>Claw / Palm<br><small style="color:var(--text-muted)">มือกลาง-ใหญ่</small></td>
+    </tr>
+
+    <tr>
+      <td>จุดเด่น</td>
+      <td>Sensor ใหม่ล่าสุด<br>ergo shape ดี</td>
+      <td>เบาสุด 49g<br>battery ยาวสุด flagship</td>
+      <td>ราคาดี, hot-swap<br>build quality สูง</td>
+      <td>Sensor ใหม่กว่า v1<br>PAW3950, hot-swap</td>
+      <td><span class="badge badge-green">เบาสุด 39g!</span><br>ราคาโอเค</td>
+      <td>Ergo มือใหญ่<br>95 ชม. battery</td>
+      <td><span class="badge badge-amber">ราคา/performance ดีที่สุด</span><br>8K+PAW3950 $59</td>
+      <td>Perforated shell<br>PAW3955 ใหม่ล่าสุด</td>
+    </tr>
+
+    <tr>
+      <td>จุดด้อย</td>
+      <td>ตัวใหม่มาก<br>battery ยังไม่ชัด</td>
+      <td>Switch เสียงดัง<br>ราคาแพง</td>
+      <td>Sensor เก่ากว่า v2<br>Polling แค่ 4K</td>
+      <td>Polling แค่ 4K<br>หนักกว่าคู่แข่ง</td>
+      <td>8K dongle แยกซื้อ<br>battery หมดเร็ว @8K</td>
+      <td>ราคาแพง<br>Sensor ไม่ใช่ PAW</td>
+      <td>มือใหญ่ไม่ fit<br>QC ผันแปร</td>
+      <td>ข้อมูลน้อย<br>ยังใหม่มาก</td>
+    </tr>
+
+    <tr>
+      <td>คะแนนรวม</td>
+      <td><span class="badge badge-cyan">★★★★☆</span></td>
+      <td><span class="badge badge-green">★★★★★</span></td>
+      <td><span class="badge badge-gray">★★★☆☆</span></td>
+      <td><span class="badge badge-gray">★★★★☆</span></td>
+      <td><span class="badge badge-amber">★★★★☆</span></td>
+      <td><span class="badge badge-cyan">★★★★☆</span></td>
+      <td><span class="badge badge-green">★★★★★</span></td>
+      <td><span class="badge badge-amber">★★★☆☆</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<!-- Recommendations -->
+<div class="rec-footer">
+  <h3>🎮 สรุปแนะนำสำหรับ Valorant</h3>
+  <div class="rec-grid">
+    <div class="rec-card rec-border-green">
+      <div class="rec-card-label">ดีที่สุดโดยรวม</div>
+      <div class="rec-card-pick">Razer Viper V4 Pro</div>
+      <div class="rec-card-reason">49g เบาพอ, 8K Hz, 180 ชม. battery, flagship all-rounder ไม่ต้องคิดอะไรมาก</div>
+    </div>
+    <div class="rec-card rec-border-amber">
+      <div class="rec-card-label">Value ที่สุด</div>
+      <div class="rec-card-pick">Akko Dash Ultra</div>
+      <div class="rec-card-reason">$59.99 แต่ได้ PAW3950 + 8K Hz + 40g — spec เทียบ $150+ ราคาต่ำกว่า 3 เท่า</div>
+    </div>
+    <div class="rec-card rec-border-cyan">
+      <div class="rec-card-label">เบาสุดในกลุ่ม</div>
+      <div class="rec-card-pick">Hitscan Hyperlight</div>
+      <div class="rec-card-reason">39g เบาที่สุดในตาราง เหมาะ fingertip/claw แต่ต้องซื้อ 8K dongle $25 แยก</div>
+    </div>
+    <div class="rec-card rec-border-cyan">
+      <div class="rec-card-label">Ergo + Sensor ใหม่</div>
+      <div class="rec-card-pick">Lamzu Thorn V2</div>
+      <div class="rec-card-reason">PAW NEXT I sensor ใหม่ล่าสุด, 8K Hz, ergo shape สำหรับ palm/claw $129</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-card-label">ถ้าชอบ hot-swap switch</div>
+      <div class="rec-card-pick">EG OP1w 4K v2</div>
+      <div class="rec-card-reason">เปลี่ยน switch ได้ง่าย, PAW3950, build quality สูง — แต่ polling แค่ 4K</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-card-label">มือใหญ่ + ergo</div>
+      <div class="rec-card-pick">Logitech SL2 DEX</div>
+      <div class="rec-card-reason">Shape ergonomic สำหรับมือใหญ่, 8K Hz, 95 ชม. battery, ecosystem Logitech</div>
+    </div>
+  </div>
+</div>
+
+<div class="footnote">
+  * ข้อมูลทั้งหมดยืนยันจากแหล่งจริง (TechPowerUp, EloShapes, ProSettings, manufacturer sites) · อัปเดต มิถุนายน 2026<br>
+  ** "Akko Tan8 Ultra" ไม่พบในฐานะสินค้าจริงของ Akko — ถ้าหมายถึงรุ่นอื่น กรุณาตรวจสอบชื่อรุ่นที่ถูกต้อง · Akko TAN8 Master ยังเป็นสินค้าใหม่มาก ข้อมูล spec บางส่วนยังเป็น estimate
+</div>
+
+<script>
+  // Filter logic
+  const mice = [
+    { col: 1, price: 129.99, polling8k: true, weight: 55 },
+    { col: 2, price: 159.99, polling8k: true, weight: 49 },
+    { col: 3, price: 119.99, polling8k: false, weight: 59 },
+    { col: 4, price: 129.99, polling8k: false, weight: 58.5 },
+    { col: 5, price: 89.99, polling8k: true, weight: 39 },
+    { col: 6, price: 159.99, polling8k: true, weight: 60 },
+    { col: 7, price: 59.99, polling8k: true, weight: 40 },
+    { col: 8, price: 59.99, polling8k: true, weight: 55 },
+  ];
+
+  const filters = document.querySelectorAll('.filter-btn');
+  filters.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filters.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      applyFilter(f);
+    });
+  });
+
+  function applyFilter(f) {
+    const table = document.getElementById('mouseTable');
+    const headerRow = table.querySelector('thead tr');
+    const allRows = Array.from(table.querySelectorAll('tbody tr:not(.sec-row)'));
+
+    // Determine which columns to show (1-indexed, col 0 is label)
+    const visible = mice.filter(m => {
+      if (f === 'all') return true;
+      if (f === 'budget') return m.price < 100;
+      if (f === 'mid') return m.price >= 100 && m.price <= 130;
+      if (f === 'premium') return m.price > 130;
+      if (f === '8k') return m.polling8k;
+      if (f === 'super') return m.weight < 50;
+      return true;
+    });
+
+    const visibleCols = new Set(visible.map(m => m.col));
+
+    // Toggle header columns
+    const thAll = headerRow.querySelectorAll('th');
+    thAll.forEach((th, i) => {
+      if (i === 0) return;
+      th.style.display = visibleCols.has(i) ? '' : 'none';
+    });
+
+    // Toggle body cells
+    allRows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((td, i) => {
+        if (i === 0) return;
+        td.style.display = visibleCols.has(i) ? '' : 'none';
+      });
+    });
+  }
+
+  // Animate weight bars on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const bars = document.querySelectorAll('.weight-bar-fill');
+    bars.forEach(b => {
+      const targetW = b.style.width;
+      b.style.width = '0%';
+      setTimeout(() => { b.style.width = targetW; }, 200);
+    });
+  });
+</script>
+</body>
+</html>
